@@ -1,11 +1,17 @@
 package compression;
 
+import java.util.ArrayList;
+
 /**
  * A coding tree from Huffman's algorithm.
  */
-public class HuffmanCodingTree {
+public class HuffmanCodingTree extends CodingNode {
 	
-	public HuffmanCodingTree(SourceSymbol[] source) {
+	private int codeAlphabetSize;
+	
+	public HuffmanCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
+		super(source);
 		
+		this.codeAlphabetSize = codeAlphabetSize;
 	}
 }

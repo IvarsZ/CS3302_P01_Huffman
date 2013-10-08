@@ -30,7 +30,6 @@ public class ShannonFanoTest extends TestCase {
 		assertEquals("010", coding.encode('C'));
 		assertEquals("011", coding.encode('D'));
 		assertEquals("11", coding.encode('E'));
-		assertEquals("100001001111", coding.encode("ABCDE"));
 	}
 	
 	/**
@@ -47,6 +46,5 @@ public class ShannonFanoTest extends TestCase {
 		assertEquals("10", coding.encode('C'));
 		assertEquals("11", coding.encode('D'));
 		assertEquals("21", coding.encode('E'));
-		assertEquals("020101121", coding.encode("ABCDE"));
 	}
 }
