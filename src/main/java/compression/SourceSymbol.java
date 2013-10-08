@@ -2,8 +2,13 @@ package compression;
 
 public class SourceSymbol {
 
-	char symbol;
-	double probability;
+	private char symbol;
+	private double probability;
+
+	public SourceSymbol(char symbol, double probability) {
+		this.symbol = symbol;
+		this.probability = probability;
+	}
 
 	public char getSymbol() {
 		return symbol;

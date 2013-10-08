@@ -1,5 +1,8 @@
 syntax: glob
 
+# tmp files.
+*~
+
 #Eclipse
 .classpath
 .project
