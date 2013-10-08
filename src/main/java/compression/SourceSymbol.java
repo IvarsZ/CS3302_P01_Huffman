@@ -1,6 +1,6 @@
 package compression;
 
-public class SourceSymbol {
+public class SourceSymbol implements Comparable<SourceSymbol> {
 
 	private char symbol;
 	private double probability;
@@ -18,7 +18,9 @@ public class SourceSymbol {
 		return probability;
 	}
 
+	@Override
 	public int compareTo(SourceSymbol sourceSymbol) {
+		
 		if (this.getProbability() == sourceSymbol.getProbability()) {
 			return 0;
 		} else if (this.getProbability() > sourceSymbol.getProbability()) {

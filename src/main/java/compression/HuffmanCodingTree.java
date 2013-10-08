@@ -1,6 +1,7 @@
 package compression;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 /**
  * A coding tree from Huffman's algorithm.
@@ -13,5 +14,7 @@ public class HuffmanCodingTree extends CodingNode {
 		super(source);
 		
 		this.codeAlphabetSize = codeAlphabetSize;
+		
+		PriorityQueue<SourceSymbol> pq = new PriorityQueue<SourceSymbol>();
 	}
 }

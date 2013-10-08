@@ -12,9 +12,12 @@ import org.paukov.combinatorics.util.ComplexCombinationGenerator;
  * Information source consisting of source symbols.
  *
  */
-public class InformationSource implements Iterable <SourceSymbol>{
+public class InformationSource implements Iterable <SourceSymbol>, Comparable<InformationSource>{
+	
+	private static final double NO_TOTAL_PROBABILITY = -1;
 	
 	private ArrayList<SourceSymbol> source;
+	private double totalProbability;
 	
 	/**
 	 * Construct an information source from the given source symbols.
@@ -22,6 +25,7 @@ public class InformationSource implements Iterable <SourceSymbol>{
 	 */
 	public InformationSource(ArrayList<SourceSymbol> source) {
 		this.source = source;
+		totalProbability = NO_TOTAL_PROBABILITY;
 	}
 	
 	/**
@@ -29,6 +33,21 @@ public class InformationSource implements Iterable <SourceSymbol>{
 	 */
 	public int getSize() {
 		return source.size();
+	}
+	
+	public double getTotalProbability() {
+		
+		// If the total probability has not been calculated,
+		if (totalProbability == NO_TOTAL_PROBABILITY) {
+			
+			// sum all source symbol probabilities to get it.
+			totalProbability = 0;
+			for (SourceSymbol sourceSymbol : this) {
+				totalProbability += sourceSymbol.getProbability();
+			}
+		}
+		
+		return totalProbability;
 	}
 	
 	/**
@@ -87,5 +106,17 @@ public class InformationSource implements Iterable <SourceSymbol>{
 		}
 
 		return minDifferenceSplit;
+	}
+
+	@Override
+	public int compareTo(InformationSource informationSource) {
+		
+		if (this.getTotalProbability() == informationSource.getTotalProbability()) {
+			return 0;
+		} else if (this.getTotalProbability() > informationSource.getTotalProbability()) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 }
