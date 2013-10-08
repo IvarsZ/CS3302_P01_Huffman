@@ -28,6 +28,21 @@ public class InformationSource implements Iterable <SourceSymbol>, Comparable<In
 		totalProbability = NO_TOTAL_PROBABILITY;
 	}
 	
+	// TODO a is useless, refactor the clash with constructor above.
+	public InformationSource(ArrayList<InformationSource> informationSources, int a) {
+		
+		source = new ArrayList<SourceSymbol>();
+		
+		totalProbability = 0;
+		for (InformationSource informationSource : informationSources) {
+			for (SourceSymbol sourceSymbol : informationSource) {
+				source.add(sourceSymbol);
+			}
+			
+			totalProbability += informationSource.getTotalProbability();
+		}
+	}
+	
 	/**
 	 * @return the size of the information source.
 	 */

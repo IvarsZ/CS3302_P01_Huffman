@@ -8,13 +8,27 @@ import java.util.PriorityQueue;
  */
 public class HuffmanCodingTree extends CodingNode {
 	
-	private int codeAlphabetSize;
-	
 	public HuffmanCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
-		super(source);
 		
-		this.codeAlphabetSize = codeAlphabetSize;
+		PriorityQueue<CodingNode> pq = new PriorityQueue<CodingNode>();
+		for (SourceSymbol sourceSymbol : source) {
+			pq.add(new CodingNode(sourceSymbol));
+		}
 		
-		PriorityQueue<SourceSymbol> pq = new PriorityQueue<SourceSymbol>();
+		while (pq.size() > 1) {
+			
+			ArrayList<CodingNode> codingNodes = new ArrayList<CodingNode>();
+			for (int i  = 0; i < codeAlphabetSize; i++) {
+				codingNodes.add(pq.poll());
+			}
+			
+			CodingNode mergedNode = new CodingNode(codingNodes);
+			pq.add(mergedNode);
+		}
+		
+		CodingNode head = pq.poll();
+		for (CodingNode successor : head.getSuccessors()) {
+			this.addSuccessor(successor);
+		}
 	}
 }

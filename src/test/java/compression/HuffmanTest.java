@@ -26,9 +26,9 @@ public class HuffmanTest extends TestCase {
 		
 		// A is 0, B is 100, C is 101, D is 110, E is 111.
 		assertEquals("0", coding.encode('A'));
-		assertEquals("100", coding.encode('B'));
-		assertEquals("101", coding.encode('C'));
-		assertEquals("110", coding.encode('D'));
-		assertEquals("111", coding.encode('E'));
+		assertEquals("111", coding.encode('B'));
+		assertEquals("110", coding.encode('C'));
+		assertEquals("101", coding.encode('D'));
+		assertEquals("100", coding.encode('E'));
 	}
 }

@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * A coding tree's node a  with an information source that is
  * encoded by it and its successors.
  */
-public class CodingNode {
+public class CodingNode implements Comparable<CodingNode>{
 	
 	private InformationSource source;
 	private ArrayList<CodingNode> successors;
@@ -16,6 +16,18 @@ public class CodingNode {
 	 */
 	public CodingNode() {
 		successors = new ArrayList<CodingNode>();
+	}
+	
+	public CodingNode(ArrayList<CodingNode> codingNodes) {
+		this();
+		
+		// TODO ugly.
+		ArrayList<InformationSource> sources = new ArrayList<InformationSource>();
+		for (CodingNode codingNode : codingNodes) {
+			sources.add(codingNode.source);
+			this.addSuccessor(codingNode);
+		}
+		source = new InformationSource(sources, 0);
 	}
 	
 	/**
@@ -29,15 +41,12 @@ public class CodingNode {
 		this.source = new InformationSource(source);
 	}
 	
-	/**
-	 * Constructs a coding node encoding the given information source.
-	 */
-	public CodingNode(ArrayList<SourceSymbol> source) {
+	public CodingNode(InformationSource informationSource) {
 		this();
 		
-		this.source = new InformationSource(source);
+		this.source = informationSource;
 	}
-	
+
 	/**
 	 * Add the given coding node as a successor.
 	 */
@@ -64,5 +73,10 @@ public class CodingNode {
 	 */
 	public boolean isLeaf() {
 		return successors.size() == 0;
+	}
+
+	@Override
+	public int compareTo(CodingNode codingNode) {
+		return source.compareTo(codingNode.source);
 	}
 }

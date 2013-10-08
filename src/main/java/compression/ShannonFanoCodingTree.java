@@ -12,7 +12,7 @@ public class ShannonFanoCodingTree extends CodingNode {
 	private int codeAlphabetSize;
 
 	public ShannonFanoCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
-		super(source);
+		super(new InformationSource(source));
 		
 		this.codeAlphabetSize = codeAlphabetSize;
 		expandNode(this);
@@ -25,7 +25,8 @@ public class ShannonFanoCodingTree extends CodingNode {
 			ICombinatoricsVector<ICombinatoricsVector<SourceSymbol>> combination = node.getSource().equalSplit(codeAlphabetSize);
 			for (ICombinatoricsVector<SourceSymbol> split : combination) {
 
-				CodingNode successor = new CodingNode(new ArrayList<SourceSymbol>(split.getVector()));
+				// TODO ugly.
+				CodingNode successor = new CodingNode(new InformationSource(new ArrayList<SourceSymbol>(split.getVector())));
 				node.addSuccessor(successor);
 				expandNode(successor);
 			}
