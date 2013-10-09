@@ -11,30 +11,55 @@ public class ShannonFanoCodingTree extends CodingNode {
 
 	private int codeAlphabetSize;
 
+	/**
+	 * Construct a Huffman coding tree with the given code alphabet size
+	 * of the given source symbols.
+	 */
 	public ShannonFanoCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
-		super(new InformationSource(source));
 		
 		this.codeAlphabetSize = codeAlphabetSize;
-		expandNode(this);
+		
+		// Create leaf nodes from the source symbols.
+		ArrayList<CodingNode> nodes = new ArrayList<CodingNode>();
+		for (SourceSymbol sourceSymbol : source) {
+			nodes.add(new CodingLeaf(sourceSymbol.getSymbol(), sourceSymbol.getProbability()));
+		}
+		
+		expandNode(this, nodes);
 	}
 
-	private void expandNode(CodingNode node) {
+	private void expandNode(CodingNode node, ArrayList<CodingNode> successors) {
 
-		if (node.getSource().getSize() > codeAlphabetSize) {
+		// If there are too many successors,
+		if (successors.size() > codeAlphabetSize) {
 
-			ICombinatoricsVector<ICombinatoricsVector<SourceSymbol>> combination = node.getSource().equalSplit(codeAlphabetSize);
-			for (ICombinatoricsVector<SourceSymbol> split : combination) {
+			// split them in code alphabet size parts and for each split part,
+			ICombinatoricsVector<ICombinatoricsVector<CodingNode>> combination = CodingNode.equalSplit(successors, codeAlphabetSize);
+			for (ICombinatoricsVector<CodingNode> splitPart : combination) {
 
-				// TODO ugly.
-				CodingNode successor = new CodingNode(new InformationSource(new ArrayList<SourceSymbol>(split.getVector())));
-				node.addSuccessor(successor);
-				expandNode(successor);
+				// if it consists of one node, add it as a leaf to the current node.
+				ArrayList<CodingNode> nextSuccessors = new ArrayList<CodingNode>(splitPart.getVector());
+				if (nextSuccessors.size() == 1) {
+					node.addSuccessor(nextSuccessors.get(0));
+				}
+				
+				// Otherwise,
+				else {
+					
+					// create a new node that is a successor of the current node
+					// and expand it with the nodes of the split part.
+					CodingNode nextNode = new CodingNode(totalProbability(nextSuccessors));
+					node.addSuccessor(nextNode);
+					expandNode(nextNode, nextSuccessors);
+				}
 			}
 		}
-		else if (node.getSource().getSize() > 1) {
+		
+		// Otherwise,
+		else if (successors.size() > 1) {
 			
-			for (SourceSymbol sourceSymbol : node.getSource()) {
-				CodingNode successor = new CodingNode(sourceSymbol);
+			// just add them as successors of this node.
+			for (CodingNode successor : successors) {
 				node.addSuccessor(successor);
 			}
 		}

@@ -2,49 +2,108 @@ package compression;
 
 import java.util.ArrayList;
 
+import org.paukov.combinatorics.Factory;
+import org.paukov.combinatorics.Generator;
+import org.paukov.combinatorics.ICombinatoricsVector;
+import org.paukov.combinatorics.util.ComplexCombinationGenerator;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
- * A coding tree's node a  with an information source that is
- * encoded by it and its successors.
+ * A coding tree's node with a probability and successor nodes.
  */
 public class CodingNode implements Comparable<CodingNode>{
+
+	/**
+	 * Splits the information source into equal parts as much as possible
+	 * based on probability of symbols.
+	 * 
+	 * @param partsCount - number of parts to split into.
+	 * @return a vector of vectors representing the equal parts.
+	 */
+	public static ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalSplit(ArrayList<CodingNode> source, int partsCount) {
+
+		// Reduce parts count to the number of symbols, if there is not enough symbols.
+		if (partsCount > source.size()) {
+			partsCount = source.size();
+		}
+
+		double totalProbability = totalProbability(source);
+		double target = totalProbability/partsCount; // Split the total probability in partsCount parts. 
+		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> minDifferenceSplit = null;
+		double minDifference = totalProbability * partsCount; // Is always smaller than parts count * total probability.
+
+		// For each possible split,
+		ICombinatoricsVector<CodingNode> vector = Factory.createVector(source);
+		Generator<ICombinatoricsVector<CodingNode>> allSplits = new ComplexCombinationGenerator<CodingNode>(vector, partsCount);
+		for (ICombinatoricsVector<ICombinatoricsVector<CodingNode>> split : allSplits) {
+
+			// sum its parts' difference from target squares.
+			double difference = 0;
+			for (ICombinatoricsVector<CodingNode> part : split) {
+
+				double sum = 0;
+				for (CodingNode codingNode : part) {
+					sum += codingNode.getProbability();
+				}
+				difference += Math.abs(sum - target) * Math.abs(sum - target);
+			}
+
+			// If the total difference is smaller than the current minimal difference, 
+			if (difference < minDifference) {
+
+				// update it and its split.
+				minDifference = difference;
+				minDifferenceSplit = split;
+			}
+		}
+
+		return minDifferenceSplit;
+	}
 	
-	private InformationSource source;
+	/**
+	 * @return the sum of probabilities of the given coding nodes.
+	 */
+	public static double totalProbability(ArrayList<CodingNode> codingNodes) {
+		
+		double totalProbability = 0;
+		for (CodingNode node : codingNodes) {
+			totalProbability += node.getProbability();
+		}
+		
+		return totalProbability;
+	}
+	
+	private double probability;
 	private ArrayList<CodingNode> successors;
 	
 	/**
-	 * Constructs a coding node.
+	 * Construct a coding node with a probability 0.
 	 */
 	public CodingNode() {
-		successors = new ArrayList<CodingNode>();
-	}
-	
-	public CodingNode(ArrayList<CodingNode> codingNodes) {
-		this();
-		
-		// TODO ugly.
-		ArrayList<InformationSource> sources = new ArrayList<InformationSource>();
-		for (CodingNode codingNode : codingNodes) {
-			sources.add(codingNode.source);
-			this.addSuccessor(codingNode);
-		}
-		source = new InformationSource(sources, 0);
+		this(0);
 	}
 	
 	/**
-	 * Constructs a coding node encoding the given source symbol.
+	 * Construct a coding node with the given probability 0.
 	 */
-	public CodingNode(SourceSymbol sourceSymbol) {
-		this();
+	public CodingNode(double probability) {
 		
-		ArrayList<SourceSymbol> source = new ArrayList<SourceSymbol>();
-		source.add(sourceSymbol);
-		this.source = new InformationSource(source);
+		successors = new ArrayList<CodingNode>();
+		this.probability = probability; 
 	}
-	
-	public CodingNode(InformationSource informationSource) {
-		this();
-		
-		this.source = informationSource;
+
+	/**
+	 * Constructs a coding node with the given nodes as its successors.
+	 */
+	public CodingNode(ArrayList<CodingNode> codingNodes) {
+
+		// Add all the nodes as successors and sum the probabilities.
+		successors = new ArrayList<CodingNode>();
+		for (CodingNode codingNode : codingNodes) {
+			this.addSuccessor(codingNode);
+			probability += codingNode.getProbability();
+		}
 	}
 
 	/**
@@ -53,7 +112,20 @@ public class CodingNode implements Comparable<CodingNode>{
 	public void addSuccessor(CodingNode successor) {
 		successors.add(successor);
 	}
-	
+
+	@Override
+	public int compareTo(CodingNode codingNode) {
+		return getProbability().compareTo(codingNode.getProbability());
+	}
+
+	/**
+	 * @return the probability of this node -
+	 * the total sum of probabilities of symbols in this node and its successors.
+	 */
+	public Double getProbability() {
+		return probability;
+	}
+
 	/**
 	 * @return successor nodes.
 	 */
@@ -62,21 +134,18 @@ public class CodingNode implements Comparable<CodingNode>{
 	}
 	
 	/**
-	 * @return the information source that is encoded by this node and its successors.
+	 * @return the symbol encoded by this node.
+	 * 
+	 * @throws NotImplementedException if its not a leaf node.
 	 */
-	public InformationSource getSource() {
-		return source;
+	public char getSymbol() {
+		throw new NotImplementedException();
 	}
-	
+
 	/**
 	 * @return true if this node is a leaf, false otherwise.
 	 */
 	public boolean isLeaf() {
-		return successors.size() == 0;
-	}
-
-	@Override
-	public int compareTo(CodingNode codingNode) {
-		return source.compareTo(codingNode.source);
+		return false;
 	}
 }

@@ -7,45 +7,45 @@ import junit.framework.TestCase;
 import org.paukov.combinatorics.ICombinatoricsVector;
 
 /**
- * Unit test for simple InformationSource.
+ * Unit test for splitting list of coding nodes into equal parts.
  */
-public class InformationSourceTest extends TestCase
+public class EqualSplitTest extends TestCase
 {
 
-	// Information source to split.
-	private ArrayList<SourceSymbol> source;
+	// List of nodes to split.
+	private ArrayList<CodingNode> nodes;
 	
-	// Symbols in the source.
-	private  SourceSymbol a;
-	private  SourceSymbol b;
-	private  SourceSymbol c;
-	private  SourceSymbol d;
-	private  SourceSymbol e;
+	// Nodes in the list.
+	private  CodingNode a;
+	private  CodingNode b;
+	private  CodingNode c;
+	private  CodingNode d;
+	private  CodingNode e;
 
 	@Override
 	public void setUp() {
 		
-		a = new SourceSymbol('A', 7/32.0);
-		b = new SourceSymbol('B', 4/32.0);
-		c = new SourceSymbol('C', 2/32.0);
-		d = new SourceSymbol('D', 11/32.0);
-		e = new SourceSymbol('E', 8/32.0);
+		a = new CodingNode(7/32.0);
+		b = new CodingNode(4/32.0);
+		c = new CodingNode(2/32.0);
+		d = new CodingNode(11/32.0);
+		e = new CodingNode(8/32.0);
 		
-		source = new ArrayList<SourceSymbol>();
-		source.add(a);
-		source.add(b);
-		source.add(c);
-		source.add(d);
-		source.add(e);
+		nodes = new ArrayList<CodingNode>();
+		nodes.add(a);
+		nodes.add(b);
+		nodes.add(c);
+		nodes.add(d);
+		nodes.add(e);
 	}
 
 	public void testEqualSplitIn2()
 	{
 
-		ICombinatoricsVector<ICombinatoricsVector<SourceSymbol>> equalHalves = new InformationSource(source).equalSplit(2);
+		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalHalves = CodingNode.equalSplit(nodes, 2);
 
 		// First half should contain A and E
-		ICombinatoricsVector<SourceSymbol> equalHalf = equalHalves.getValue(0);
+		ICombinatoricsVector<CodingNode> equalHalf = equalHalves.getValue(0);
 		assertEquals(2, equalHalf.getSize());
 		assertTrue(equalHalf.contains(b));
 		assertTrue(equalHalf.contains(d));
@@ -60,11 +60,11 @@ public class InformationSourceTest extends TestCase
 
 	public void testEqualSplit1In2()
 	{
-		// When splitting an information source with one element,
-		ArrayList<SourceSymbol> source = new ArrayList<SourceSymbol>();
-		SourceSymbol a = new SourceSymbol('A', 1);
+		// When splitting a list with one element,
+		ArrayList<CodingNode> source = new ArrayList<CodingNode>();
+		CodingNode a = new CodingNode(1);
 		source.add(a);
-		ICombinatoricsVector<ICombinatoricsVector<SourceSymbol>> part = new InformationSource(source).equalSplit(2);
+		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> part = CodingNode.equalSplit(source, 2);
 
 		// it should be split in one part containing only the element.
 		assertEquals(1, part.getSize());
@@ -74,10 +74,10 @@ public class InformationSourceTest extends TestCase
 
 	public void testEqualSplitIn3() {
 
-		ICombinatoricsVector<ICombinatoricsVector<SourceSymbol>> equalThirds = new InformationSource(source).equalSplit(3);
+		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalThirds = CodingNode.equalSplit(nodes, 3);
 
 		// First third should contain A and B
-		ICombinatoricsVector<SourceSymbol> equalThird = equalThirds.getValue(0);
+		ICombinatoricsVector<CodingNode> equalThird = equalThirds.getValue(0);
 		assertEquals(2, equalThird.getSize());
 		assertTrue(equalThird.contains(a));
 		assertTrue(equalThird.contains(b));
@@ -96,23 +96,23 @@ public class InformationSourceTest extends TestCase
 	
 	public void testEqualSplitIn3_2() {
 		
-		a = new SourceSymbol('A', 15/41.0);
-		b = new SourceSymbol('B', 7/41.0);
-		c = new SourceSymbol('C', 6/41.0);
-		d = new SourceSymbol('D', 6/41.0);
-		e = new SourceSymbol('E', 5/41.0);
+		a = new CodingNode(15/39.0);
+		b = new CodingNode(7/39.0);
+		c = new CodingNode(6/39.0);
+		d = new CodingNode(6/39.0);
+		e = new CodingNode(5/39.0);
 		
-		source = new ArrayList<SourceSymbol>();
-		source.add(a);
-		source.add(b);
-		source.add(c);
-		source.add(d);
-		source.add(e);
+		nodes = new ArrayList<CodingNode>();
+		nodes.add(a);
+		nodes.add(b);
+		nodes.add(c);
+		nodes.add(d);
+		nodes.add(e);
 		
-		ICombinatoricsVector<ICombinatoricsVector<SourceSymbol>> equalThirds = new InformationSource(source).equalSplit(3);
+		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalThirds = CodingNode.equalSplit(nodes, 3);
 
 		// First third should contain A
-		ICombinatoricsVector<SourceSymbol> equalThird = equalThirds.getValue(0);
+		ICombinatoricsVector<CodingNode> equalThird = equalThirds.getValue(0);
 		assertEquals(1, equalThird.getSize());
 		assertTrue(equalThird.contains(a));
 

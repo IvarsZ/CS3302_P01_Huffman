@@ -10,17 +10,17 @@ public class CodingTest extends TestCase
 
 	public void testFromTree() {
 
-		CodingNode codingTree = new CodingNode();
+		CodingNode codingTree = new CodingNode(1);
 		
-		CodingNode node = new CodingNode();
-		node.addSuccessor(new CodingNode(new SourceSymbol('A', 1/6.0)));
-		node.addSuccessor(new CodingNode(new SourceSymbol('S', 1/6.0)));
+		CodingNode node = new CodingNode(1/3.0);
+		node.addSuccessor(new CodingLeaf('A', 1/6.0));
+		node.addSuccessor(new CodingLeaf('S', 1/6.0));
 		codingTree.addSuccessor(node);
 		
-		node = new CodingNode(new SourceSymbol('D', 1/3.0));
+		node = new CodingLeaf('D', 1/3.0);
 		codingTree.addSuccessor(node);
 		
-		node = new CodingNode(new SourceSymbol('F', 1/3.0));
+		node = new CodingLeaf('F', 1/3.0);
 		codingTree.addSuccessor(node);
 		
 		Coding coding = new Coding(codingTree);
@@ -32,7 +32,7 @@ public class CodingTest extends TestCase
 
 	public void testFromTreeWithOneNode() {
 
-		CodingNode codingTree = new CodingNode(new SourceSymbol('A', 1));
+		CodingNode codingTree = new CodingLeaf('A', 1);
 		Coding coding = new Coding(codingTree);
 		
 		// The only symbol A is encoded and decoded as 0.

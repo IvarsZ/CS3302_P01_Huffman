@@ -8,25 +8,36 @@ import java.util.PriorityQueue;
  */
 public class HuffmanCodingTree extends CodingNode {
 	
+	// TODO multiple Huffman.
+	
+	/**
+	 * Construct a Huffman coding tree with the given code alphabet size
+	 * of the given source symbols.
+	 */
 	public HuffmanCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
 		
-		PriorityQueue<CodingNode> pq = new PriorityQueue<CodingNode>();
+		// Add all source symbols as leafs to a priority queue.
+		PriorityQueue<CodingNode> nodesToMerge = new PriorityQueue<CodingNode>();
 		for (SourceSymbol sourceSymbol : source) {
-			pq.add(new CodingNode(sourceSymbol));
+			nodesToMerge.add(new CodingLeaf(sourceSymbol.getSymbol(), sourceSymbol.getProbability()));
 		}
 		
-		while (pq.size() > 1) {
-			
+		// While there are nodes to merge,
+		while (nodesToMerge.size() > 1) {
+		
+			// merge code alphabet size nodes,
 			ArrayList<CodingNode> codingNodes = new ArrayList<CodingNode>();
 			for (int i  = 0; i < codeAlphabetSize; i++) {
-				codingNodes.add(pq.poll());
+				codingNodes.add(nodesToMerge.poll());
 			}
 			
+			// and add the merged node back to the priority queue.
 			CodingNode mergedNode = new CodingNode(codingNodes);
-			pq.add(mergedNode);
+			nodesToMerge.add(mergedNode);
 		}
 		
-		CodingNode head = pq.poll();
+		// The last node is the head of the tree.
+		CodingNode head = nodesToMerge.poll();
 		for (CodingNode successor : head.getSuccessors()) {
 			this.addSuccessor(successor);
 		}
