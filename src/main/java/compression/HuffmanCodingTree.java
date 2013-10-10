@@ -7,39 +7,46 @@ import java.util.PriorityQueue;
  * A coding tree from Huffman's algorithm.
  */
 public class HuffmanCodingTree extends CodingNode {
-	
-	// TODO multiple Huffman.
-	
+
 	/**
 	 * Construct a Huffman coding tree with the given code alphabet size
 	 * of the given source symbols.
 	 */
 	public HuffmanCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
-		
+
 		// Add all source symbols as leafs to a priority queue.
 		PriorityQueue<CodingNode> nodesToMerge = new PriorityQueue<CodingNode>();
 		for (SourceSymbol sourceSymbol : source) {
 			nodesToMerge.add(new CodingLeaf(sourceSymbol.getSymbol(), sourceSymbol.getProbability()));
 		}
-		
-		// While there are nodes to merge,
-		while (nodesToMerge.size() > 1) {
-		
-			// merge code alphabet size nodes,
-			ArrayList<CodingNode> codingNodes = new ArrayList<CodingNode>();
-			for (int i  = 0; i < codeAlphabetSize; i++) {
-				codingNodes.add(nodesToMerge.poll());
-			}
+
+		// No merging necessary if there are more code alphabet symbols.
+		if (nodesToMerge.size() > codeAlphabetSize) {
 			
-			// and add the merged node back to the priority queue.
-			CodingNode mergedNode = new CodingNode(codingNodes);
-			nodesToMerge.add(mergedNode);
+			// TODO explain better, check formula.
+			// At the first stage merge k nodes, so that after the merge,
+			// the number of the nodes left is congruent to 1 by codeAlphabetSize - 1.
+			mergeNodes(codeAlphabetSize - (nodesToMerge.size() - 1) % (codeAlphabetSize - 1), nodesToMerge);
+
+			// While there are nodes to merge, merge them.
+			while (nodesToMerge.size() > codeAlphabetSize) {	
+				mergeNodes(codeAlphabetSize, nodesToMerge);
+			}
 		}
-		
-		// The last node is the head of the tree.
-		CodingNode head = nodesToMerge.poll();
-		for (CodingNode successor : head.getSuccessors()) {
+
+		// Add the remaining nodes as successors of the head node.
+		for (CodingNode successor : nodesToMerge) {
 			this.addSuccessor(successor);
 		}
+	}
+
+	private void mergeNodes(int numberOfNodesToMerge, PriorityQueue<CodingNode> nodesToMerge) {
+		ArrayList<CodingNode> codingNodes = new ArrayList<CodingNode>();
+		for (int i  = 0; i < numberOfNodesToMerge ; i++) {
+			codingNodes.add(nodesToMerge.poll());
+		}
+
+		// Add the merged node back to the priority queue.
+		nodesToMerge.add(new CodingNode(codingNodes));
 	}
 }

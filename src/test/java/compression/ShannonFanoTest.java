@@ -12,11 +12,11 @@ public class ShannonFanoTest extends TestCase {
 	public void setUp() {
 		
 		source = new ArrayList<SourceSymbol>();
-		source.add(new SourceSymbol('A', 15/41.0));
-		source.add(new SourceSymbol('B', 7/41.0));
-		source.add(new SourceSymbol('C', 6/41.0));
-		source.add(new SourceSymbol('D', 6/41.0));
-		source.add(new SourceSymbol('E', 5/41.0));
+		source.add(new SourceSymbol('A', 15/39.0));
+		source.add(new SourceSymbol('B', 7/39.0));
+		source.add(new SourceSymbol('C', 6/39.0));
+		source.add(new SourceSymbol('D', 6/39.0));
+		source.add(new SourceSymbol('E', 5/39.0));
 	}
 	
 	public void testShannonFano() {
