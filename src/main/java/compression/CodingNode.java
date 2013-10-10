@@ -98,11 +98,10 @@ public class CodingNode implements Comparable<CodingNode>{
 	 */
 	public CodingNode(ArrayList<CodingNode> codingNodes) {
 
-		// Add all the nodes as successors and sum the probabilities.
+		// Add all the nodes as successors.
 		successors = new ArrayList<CodingNode>();
 		for (CodingNode codingNode : codingNodes) {
 			this.addSuccessor(codingNode);
-			probability += codingNode.getProbability();
 		}
 	}
 
@@ -110,7 +109,40 @@ public class CodingNode implements Comparable<CodingNode>{
 	 * Add the given coding node as a successor.
 	 */
 	public void addSuccessor(CodingNode successor) {
+		
+		// Update probability.
+		probability += successor.getProbability();
 		successors.add(successor);
+	}
+	
+	// TODO comment and test.
+	public double averageLength() {
+		
+		// A special case, when there is only symbol,
+		if (isLeaf()) {
+			
+			// so the average length is 1 * 1 = 1.
+			return 1;
+		}
+		
+		// Otherwise recursively calculate the average length.
+		return averageLength(0);
+	}
+	
+	private double averageLength(int depth) {
+		
+		if (isLeaf()) {
+			return depth  * getProbability();
+		}
+		else {
+			
+			double averageLength = 0;
+			for (CodingNode successor : getSuccessors()) {
+				averageLength += successor.averageLength(depth + 1);
+			}
+			
+			return averageLength;
+		}
 	}
 
 	@Override
@@ -147,5 +179,28 @@ public class CodingNode implements Comparable<CodingNode>{
 	 */
 	public boolean isLeaf() {
 		return false;
+	}
+	
+	public void print() {
+		printIndented(0);
+	}
+	
+	private void printIndented(int indentation) {
+		
+		// Indent the output.
+		for (int i = 0; i < indentation; i++) {
+			System.out.print("  ");
+		}
+		
+		// Print the node itself, and then its successors recursively.
+		if (isLeaf()) {
+			System.out.println(getSymbol() + " " + getProbability());
+		}
+		else {
+			System.out.println(getProbability());
+		}
+		for (CodingNode successor : getSuccessors()) {
+			successor.printIndented(indentation + 1);
+		}
 	}
 }
