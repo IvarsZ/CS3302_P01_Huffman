@@ -23,18 +23,25 @@ public class HuffmanCodingTree extends CodingNode {
 		// No merging necessary if there are more code alphabet symbols.
 		if (nodesToMerge.size() > codeAlphabetSize) {
 			
-			// TODO explain better, check formula.
-			// At the first stage merge k nodes, so that after the merge,
-			// the number of the nodes left is congruent to 1 by codeAlphabetSize - 1.
+			/* 
+			 * To make sure that after the merging there are codeAlphabetSize nodes,
+			 * "add" k imaginary nodes to the queue, so that
+			 * k + n = 1 (mod c - 1),
+			 * where c is codeAlphabetSize and n is source size (nodesToMerge.size()).
+			 * 
+			 * The k imaginary nodes can be ignored when merging,
+			 * so actually merge c - k nodes at the first step.
+			 * That is c - n - 1 mod (c - 1) nodes.
+			 */ 
 			mergeNodes(codeAlphabetSize - (nodesToMerge.size() - 1) % (codeAlphabetSize - 1), nodesToMerge);
 
-			// While there are nodes to merge, merge them.
+			// Now merging by c nodes will leave c nodes at the end.
 			while (nodesToMerge.size() > codeAlphabetSize) {	
 				mergeNodes(codeAlphabetSize, nodesToMerge);
 			}
 		}
 
-		// Add the remaining nodes as successors of the head node.
+		// Add the remaining c nodes as successors of the head node.
 		for (CodingNode successor : nodesToMerge) {
 			this.addSuccessor(successor);
 		}
