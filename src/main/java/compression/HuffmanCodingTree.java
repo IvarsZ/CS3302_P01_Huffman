@@ -20,7 +20,7 @@ public class HuffmanCodingTree extends CodingNode {
 			nodesToMerge.add(new CodingLeaf(sourceSymbol.getSymbol(), sourceSymbol.getProbability()));
 		}
 
-		// No merging necessary if there are more code alphabet symbols.
+		// No merging is necessary if there are more code alphabet symbols.
 		if (nodesToMerge.size() > codeAlphabetSize) {
 			
 			/* 
@@ -47,13 +47,16 @@ public class HuffmanCodingTree extends CodingNode {
 		}
 	}
 
+	/**
+	 * Merges numberOfNodesToMerge nodes from the nodesToMerge as successors of
+	 * a single node that is added back to nodesToMerge.
+	 */
 	private void mergeNodes(int numberOfNodesToMerge, PriorityQueue<CodingNode> nodesToMerge) {
 		ArrayList<CodingNode> codingNodes = new ArrayList<CodingNode>();
 		for (int i  = 0; i < numberOfNodesToMerge ; i++) {
 			codingNodes.add(nodesToMerge.poll());
 		}
 
-		// Add the merged node back to the priority queue.
 		nodesToMerge.add(new CodingNode(codingNodes));
 	}
 }
