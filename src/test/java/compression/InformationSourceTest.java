@@ -14,7 +14,7 @@ public class InformationSourceTest extends TestCase {
 		InformationSource source = new InformationSource(sourceSymbols);
 		
 		// The entropy is 0.469 when rounded to 3 decimal digits.
-		assertEquals(0.469, ((int) (source.entropy() * 1000 + 0.5))/1000.0);
+		assertEquals(0.469, ((int) (source.entropy(2) * 1000 + 0.5))/1000.0);
 	}
 
 }

@@ -40,6 +40,7 @@ public class CodingApp
 		if (algorithmChoice.equals("H")) {
 			codingTree = new HuffmanCodingTree(source, codeAlphabetSize);
 		}
+		System.out.println();
 		
 		in.close();
 
@@ -49,18 +50,25 @@ public class CodingApp
 		double averageLength = codingTree.averageLength();
 		System.out.println("Average length: " + DF.format(averageLength));
 		System.out.println("Entropy:");
-		double entropy = source.entropy();
-		System.out.println(DF.format(entropy)); // TODO fix for non-binary sources.
+		double entropy = source.entropy(codeAlphabetSize); // Adjust entropy to codeAlphabetSize.
+		System.out.println(DF.format(entropy));
 		System.out.println("Average length/Entropy:");
 		System.out.println(DF.format(averageLength/entropy));
+		System.out.println();
+		
+		// Print the encoding.
+		System.out.println("Encoding:");
+		Coding coding = new Coding(codingTree);
+		coding.printEncoding();
+		System.out.println();
 		
 		// Generate a random message that is consistent with the information source.
 		System.out.println("Random message:");
 		String message = source.generateRandomMessage(20);
 		System.out.println(message);
+		System.out.println();
 
 		// Encode and decode it.
-		Coding coding = new Coding(codingTree);
 		System.out.println("Encoded:");
 		String encodedMessage = coding.encode(message);
 		System.out.println(encodedMessage);
@@ -68,6 +76,7 @@ public class CodingApp
 		String decodedMessage = coding.decode(encodedMessage);
 		System.out.println(decodedMessage);
 		
+		// Check if decoded correctly.
 		if (decodedMessage.equals(message)) {
 			System.out.println("Decoded correctly.");
 		}
@@ -126,5 +135,19 @@ public class CodingApp
 		}
 		
 		return readDouble;
+	}
+	
+	/**
+	 * @return a character read from the given scanner that wasn't part of a longer string.
+	 */
+	public static char readSingleChar(Scanner in) {
+		
+		String input = in.next();
+		while (input.length() != 1) {
+			System.out.println("Invalid input - too long symbol, try again.");
+			in.nextLine();
+			input = in.next();
+		}
+		return input.charAt(0);
 	}
 }

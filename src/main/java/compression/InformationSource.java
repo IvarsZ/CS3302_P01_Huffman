@@ -28,19 +28,18 @@ public class InformationSource implements Iterable<SourceSymbol> {
 		while (symbolsToRead > 0) {
 
 			// Read a single character.
-			String input = in.next();
-			while (input.length() != 1) {
-				System.out.println("Invalid input - too long symbol, try again.");
-				in.nextLine();
-				input = in.next();
-			}
-			char symbol = input.charAt(0);
+			char symbol = CodingApp.readSingleChar(in);
 
 			// Read the probability, it must be non-negative.
 			double probability = CodingApp.readDouble(in, 0);
 
-			source.add(new SourceSymbol(symbol, probability));
-			symbolsToRead--;
+			if (source.contains(new SourceSymbol(symbol, 0))) {
+				System.out.println("Symbol " + symbol +  " is already used, skipping it.");
+			}
+			else {
+				source.add(new SourceSymbol(symbol, probability));
+				symbolsToRead--;
+			}
 		}
 
 		in.nextLine();
@@ -74,14 +73,16 @@ public class InformationSource implements Iterable<SourceSymbol> {
 	}
 	
 	/**
+	 * @param baseOfLog - the base of log to use when calculating entropy. 
+	 * 
 	 * @return the entropy of the information source.
 	 */
-	public double entropy() {
+	public double entropy(int baseOfLog) {
 		
 		double entropy = 0;
 		for (SourceSymbol sourceSymbol : this) {
 			double probability = sourceSymbol.getProbability();
-			entropy -= probability * Math.log(probability)/Math.log(2);
+			entropy -= probability * Math.log(probability)/Math.log(baseOfLog);
 		}
 		
 		return entropy;

@@ -33,6 +33,24 @@ public class HuffmanTest extends TestCase {
 		assertEquals("100", coding.encode('E'));
 	}
 
+	public void testMergeCount() {
+
+		// Given 15 nodes and 12 code symbols, one should merge 4.
+		assertEquals(4, HuffmanCodingTree.mergeCount(15, 12));
+	}
+
+	public void testMergeCount2() {
+
+		// Given 5 nodes and 5 code symbols, one should merge 5.
+		assertEquals(5, HuffmanCodingTree.mergeCount(5, 5));
+	}
+	
+	public void testMergeCount3() {
+
+		// Given 5 nodes and 6 code symbols, one should merge 5.
+		assertEquals(5, HuffmanCodingTree.mergeCount(5, 6));
+	}
+
 	/**
 	 * Test where always have to merge code alphabet size nodes.
 	 */

@@ -3,7 +3,7 @@ package compression;
 /**
  * A symbol with a probability of appearance.
  */
-public class SourceSymbol implements Comparable<SourceSymbol> {
+public class SourceSymbol {
 
 	private char symbol;
 	private double probability;
@@ -36,11 +36,17 @@ public class SourceSymbol implements Comparable<SourceSymbol> {
 	public void setProbability(double probability) {
 		this.probability = probability;
 	}
-
+	
 	@Override
-	public int compareTo(SourceSymbol sourceSymbol) {
+	public boolean equals(Object object) {
 		
-		// Compare by probability.
-		return ((Double) probability).compareTo(sourceSymbol.getProbability());
+		if (object instanceof SourceSymbol) {
+			
+			// Equality by the symbol, ignoring probability.
+			SourceSymbol sourceSymbol = (SourceSymbol) object;
+			return symbol == sourceSymbol.symbol;
+		}
+		
+		return false;
 	}
 }

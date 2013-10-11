@@ -2,6 +2,7 @@ package compression;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A coding function mapping information source's symbols to code alphabet symbols.
@@ -103,9 +104,22 @@ public class Coding {
 			// Recursively encode all successor nodes.
 			int i = 0;
 			for (CodingNode successor : node.getSuccessors()) {
-				makeEncodingFromTree(successor, code + i);
+				
+				char digit = (char) ('0' + i); // Uses ascii chars as digits starting from 0.		
+				makeEncodingFromTree(successor, code + digit);
 				i++;
 			}
 		}
+	}
+	
+	/**
+	 * Prints the encoding to the system.out..
+	 */
+	public void printEncoding() {
+		
+		for (Entry<Character, String> encodedSymbol : encoding.entrySet()) {
+			System.out.print(encodedSymbol.getKey() + "->" + encodedSymbol.getValue() + " "); 
+		}
+		System.out.println();
 	}
 }
