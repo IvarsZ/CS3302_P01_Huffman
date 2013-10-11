@@ -6,17 +6,18 @@ import junit.framework.TestCase;
 
 public class ShannonFanoTest extends TestCase {
 	
-	private ArrayList<SourceSymbol> source;
+	private InformationSource source;
 	
 	@Override
 	public void setUp() {
 		
-		source = new ArrayList<SourceSymbol>();
-		source.add(new SourceSymbol('A', 15/39.0));
-		source.add(new SourceSymbol('B', 7/39.0));
-		source.add(new SourceSymbol('C', 6/39.0));
-		source.add(new SourceSymbol('D', 6/39.0));
-		source.add(new SourceSymbol('E', 5/39.0));
+		ArrayList<SourceSymbol> sourceSymbols = new ArrayList<SourceSymbol>();
+		sourceSymbols.add(new SourceSymbol('A', 15/39.0));
+		sourceSymbols.add(new SourceSymbol('B', 7/39.0));
+		sourceSymbols.add(new SourceSymbol('C', 6/39.0));
+		sourceSymbols.add(new SourceSymbol('D', 6/39.0));
+		sourceSymbols.add(new SourceSymbol('E', 5/39.0));
+		source = new InformationSource(sourceSymbols);
 	}
 	
 	public void testShannonFano() {

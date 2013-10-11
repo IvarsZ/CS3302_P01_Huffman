@@ -29,6 +29,13 @@ public class SourceSymbol implements Comparable<SourceSymbol> {
 	public double getProbability() {
 		return probability;
 	}
+	
+	/**
+	 * Setter for probability.
+	 */
+	public void setProbability(double probability) {
+		this.probability = probability;
+	}
 
 	@Override
 	public int compareTo(SourceSymbol sourceSymbol) {

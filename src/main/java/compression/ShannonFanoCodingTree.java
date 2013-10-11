@@ -15,7 +15,7 @@ public class ShannonFanoCodingTree extends CodingNode {
 	 * Construct a Huffman coding tree with the given code alphabet size
 	 * of the given source symbols.
 	 */
-	public ShannonFanoCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
+	public ShannonFanoCodingTree(InformationSource source, int codeAlphabetSize) {
 		
 		this.codeAlphabetSize = codeAlphabetSize;
 		
@@ -26,6 +26,7 @@ public class ShannonFanoCodingTree extends CodingNode {
 		}
 		
 		expandNode(this, nodes);
+		this.updateProbability();
 	}
 
 	private void expandNode(CodingNode node, ArrayList<CodingNode> successors) {
@@ -37,9 +38,11 @@ public class ShannonFanoCodingTree extends CodingNode {
 			ICombinatoricsVector<ICombinatoricsVector<CodingNode>> combination = CodingNode.equalSplit(successors, codeAlphabetSize);
 			for (ICombinatoricsVector<CodingNode> splitPart : combination) {
 
-				// if it consists of one node, add it as a leaf to the current node.
+				// if it consists of one node,
 				ArrayList<CodingNode> nextSuccessors = new ArrayList<CodingNode>(splitPart.getVector());
 				if (nextSuccessors.size() == 1) {
+					
+					/// add it as a leaf to the current node.
 					node.addSuccessor(nextSuccessors.get(0));
 				}
 				
@@ -48,15 +51,16 @@ public class ShannonFanoCodingTree extends CodingNode {
 					
 					// create a new node that is a successor of the current node
 					// and expand it with the nodes of the split part.
-					CodingNode nextNode = new CodingNode(totalProbability(nextSuccessors));
+					CodingNode nextNode = new CodingNode();
 					node.addSuccessor(nextNode);
 					expandNode(nextNode, nextSuccessors);
+					nextNode.updateProbability();
 				}
 			}
 		}
 		
 		// Otherwise,
-		else if (successors.size() > 1) {
+		else {
 			
 			// just add them as successors of this node.
 			for (CodingNode successor : successors) {

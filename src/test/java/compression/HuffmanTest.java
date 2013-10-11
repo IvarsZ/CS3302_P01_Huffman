@@ -6,17 +6,18 @@ import junit.framework.TestCase;
 
 public class HuffmanTest extends TestCase {
 
-	private ArrayList<SourceSymbol> source;
+	private InformationSource source;
 
 	@Override
 	public void setUp() {
 
-		source = new ArrayList<SourceSymbol>();
-		source.add(new SourceSymbol('A', 15/39.0));
-		source.add(new SourceSymbol('B', 7/39.0));
-		source.add(new SourceSymbol('C', 6/39.0));
-		source.add(new SourceSymbol('D', 6/39.0));
-		source.add(new SourceSymbol('E', 5/39.0));
+		ArrayList<SourceSymbol> sourceSymbols = new ArrayList<SourceSymbol>();
+		sourceSymbols.add(new SourceSymbol('A', 15/39.0));
+		sourceSymbols.add(new SourceSymbol('B', 7/39.0));
+		sourceSymbols.add(new SourceSymbol('C', 6/39.0));
+		sourceSymbols.add(new SourceSymbol('D', 6/39.0));
+		sourceSymbols.add(new SourceSymbol('E', 5/39.0));
+		source = new InformationSource(sourceSymbols);
 	}
 
 	public void testHuffman() {
@@ -24,7 +25,7 @@ public class HuffmanTest extends TestCase {
 		HuffmanCodingTree hf = new HuffmanCodingTree(source, 2);
 		Coding coding = new Coding(hf);
 
-		// A is 0, B is 100, C is 101, D is 110, E is 111.
+		// A is 0, B is 111, C is 110, D is 101, E is 100.
 		assertEquals("0", coding.encode('A'));
 		assertEquals("111", coding.encode('B'));
 		assertEquals("110", coding.encode('C'));
@@ -32,12 +33,15 @@ public class HuffmanTest extends TestCase {
 		assertEquals("100", coding.encode('E'));
 	}
 
+	/**
+	 * Test where always have to merge code alphabet size nodes.
+	 */
 	public void testMultipleHuffman() {
 
 		HuffmanCodingTree hf = new HuffmanCodingTree(source, 3);
 		Coding coding = new Coding(hf);
 
-		// A is 0, B is 100, C is 101, D is 110, E is 111.
+		// A is 1, B is 0, C is 22, D is 21, E is 20.
 		assertEquals("1", coding.encode('A'));
 		assertEquals("0", coding.encode('B'));
 		assertEquals("22", coding.encode('C'));
@@ -50,18 +54,19 @@ public class HuffmanTest extends TestCase {
 	 */
 	public void testMultipleHuffman2() {
 
-		source = new ArrayList<SourceSymbol>();
-		source.add(new SourceSymbol('A', 3/10.0));
-		source.add(new SourceSymbol('B', 2/10.0));
-		source.add(new SourceSymbol('C', 2/10.0));
-		source.add(new SourceSymbol('D', 1/10.0));
-		source.add(new SourceSymbol('E', 1/10.0));
-		source.add(new SourceSymbol('F', 1/10.0));
+		ArrayList<SourceSymbol> sourceSymbols = new ArrayList<SourceSymbol>();
+		sourceSymbols.add(new SourceSymbol('A', 3/10.0));
+		sourceSymbols.add(new SourceSymbol('B', 2/10.0));
+		sourceSymbols.add(new SourceSymbol('C', 2/10.0));
+		sourceSymbols.add(new SourceSymbol('D', 1/10.0));
+		sourceSymbols.add(new SourceSymbol('E', 1/10.0));
+		sourceSymbols.add(new SourceSymbol('F', 1/10.0));
+		source = new InformationSource(sourceSymbols);
 
 		HuffmanCodingTree hf = new HuffmanCodingTree(source, 3);
 		Coding coding = new Coding(hf);
 
-		// A is 0, B is 100, C is 101, D is 110, E is 111.
+		// A is 1, B is 0, C is 22, D is 210, E is 211, F is 20.
 		assertEquals("1", coding.encode('A'));
 		assertEquals("0", coding.encode('B'));
 		assertEquals("22", coding.encode('C'));
@@ -75,17 +80,18 @@ public class HuffmanTest extends TestCase {
 	 */
 	public void testMultipleHuffman3() {
 
-		source = new ArrayList<SourceSymbol>();
-		source.add(new SourceSymbol('A', 5/15.0));
-		source.add(new SourceSymbol('B', 4/15.0));
-		source.add(new SourceSymbol('C', 3/15.0));
-		source.add(new SourceSymbol('D', 2/15.0));
-		source.add(new SourceSymbol('E', 1/15.0));
+		ArrayList<SourceSymbol> sourceSymbols = new ArrayList<SourceSymbol>();
+		sourceSymbols.add(new SourceSymbol('A', 5/15.0));
+		sourceSymbols.add(new SourceSymbol('B', 4/15.0));
+		sourceSymbols.add(new SourceSymbol('C', 3/15.0));
+		sourceSymbols.add(new SourceSymbol('D', 2/15.0));
+		sourceSymbols.add(new SourceSymbol('E', 1/15.0));
+		source = new InformationSource(sourceSymbols);
 
 		HuffmanCodingTree hf = new HuffmanCodingTree(source, 6);
 		Coding coding = new Coding(hf);
 
-		// A is 0, B is 100, C is 101, D is 110, E is 111.
+		// Each symbol is one digit.
 		assertEquals("3", coding.encode('A'));
 		assertEquals("2", coding.encode('B'));
 		assertEquals("4", coding.encode('C'));

@@ -4,13 +4,15 @@ import junit.framework.TestCase;
 
 /**
  * Unit test for Coding.
+ * 
+ * Tests encoding/decoding from already built tree.
  */
 public class CodingTest extends TestCase
 {
 
 	public void testFromTree() {
 
-		CodingNode codingTree = new CodingNode(1);
+		CodingNode codingTree = new CodingNode();
 		
 		CodingNode node = new CodingNode(1/3.0);
 		node.addSuccessor(new CodingLeaf('A', 1/6.0));

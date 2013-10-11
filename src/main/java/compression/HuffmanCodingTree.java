@@ -12,7 +12,7 @@ public class HuffmanCodingTree extends CodingNode {
 	 * Construct a Huffman coding tree with the given code alphabet size
 	 * of the given source symbols.
 	 */
-	public HuffmanCodingTree(ArrayList<SourceSymbol> source, int codeAlphabetSize) {
+	public HuffmanCodingTree(InformationSource source, int codeAlphabetSize) {
 
 		// Add all source symbols as leafs to a priority queue.
 		PriorityQueue<CodingNode> nodesToMerge = new PriorityQueue<CodingNode>();
@@ -31,7 +31,7 @@ public class HuffmanCodingTree extends CodingNode {
 			 * 
 			 * The k imaginary nodes can be ignored when merging,
 			 * so actually merge c - k nodes at the first step.
-			 * That is c - n - 1 mod (c - 1) nodes.
+			 * That is c - (n - 1 mod (c - 1)) nodes.
 			 */ 
 			mergeNodes(codeAlphabetSize - (nodesToMerge.size() - 1) % (codeAlphabetSize - 1), nodesToMerge);
 

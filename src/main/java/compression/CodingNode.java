@@ -60,35 +60,35 @@ public class CodingNode implements Comparable<CodingNode>{
 
 		return minDifferenceSplit;
 	}
-	
+
 	/**
 	 * @return the sum of probabilities of the given coding nodes.
 	 */
 	public static double totalProbability(ArrayList<CodingNode> codingNodes) {
-		
+
 		double totalProbability = 0;
 		for (CodingNode node : codingNodes) {
 			totalProbability += node.getProbability();
 		}
-		
+
 		return totalProbability;
 	}
-	
+
 	private double probability;
 	private ArrayList<CodingNode> successors;
-	
+
 	/**
 	 * Construct a coding node with a probability 0.
 	 */
 	public CodingNode() {
 		this(0);
 	}
-	
+
 	/**
 	 * Construct a coding node with the given probability 0.
 	 */
 	public CodingNode(double probability) {
-		
+
 		successors = new ArrayList<CodingNode>();
 		this.probability = probability; 
 	}
@@ -109,38 +109,51 @@ public class CodingNode implements Comparable<CodingNode>{
 	 * Add the given coding node as a successor.
 	 */
 	public void addSuccessor(CodingNode successor) {
-		
+
 		// Update probability.
 		probability += successor.getProbability();
 		successors.add(successor);
 	}
-	
-	// TODO comment and test.
+
+	/**
+	 * @return the average length of the coding induced by this coding tree.
+	 */
 	public double averageLength() {
-		
+
 		// A special case, when there is only symbol,
 		if (isLeaf()) {
-			
+
 			// so the average length is 1 * 1 = 1.
 			return 1;
 		}
-		
+
 		// Otherwise recursively calculate the average length.
 		return averageLength(0);
 	}
-	
-	private double averageLength(int depth) {
-		
+
+	/**
+	 * @param preffixLength - length of this node's encoding in the whole tree.
+	 * 
+	 * @return the average length of the coding induced by this coding tree.
+	 */
+	private double averageLength(int preffixLength) {
+
+		// For a leaf node,
 		if (isLeaf()) {
-			return depth  * getProbability();
+
+			// return its average length.
+			return preffixLength  * getProbability();
 		}
+
+		// For non-leaf node,
 		else {
-			
+
+			// return the sum of its successors' average lengths.
 			double averageLength = 0;
 			for (CodingNode successor : getSuccessors()) {
-				averageLength += successor.averageLength(depth + 1);
+				averageLength += successor.averageLength(preffixLength + 1);
 			}
-			
+
 			return averageLength;
 		}
 	}
@@ -164,7 +177,7 @@ public class CodingNode implements Comparable<CodingNode>{
 	public ArrayList<CodingNode> getSuccessors() {
 		return successors;
 	}
-	
+
 	/**
 	 * @return the symbol encoded by this node.
 	 * 
@@ -180,25 +193,44 @@ public class CodingNode implements Comparable<CodingNode>{
 	public boolean isLeaf() {
 		return false;
 	}
-	
+
+	/**
+	 * Prints the coding tree of this node to the system.out.
+	 */
 	public void print() {
 		printIndented(0);
 	}
 	
+	/**
+	 * Update the probability with the sum of its successor probabilities.
+	 */
+	public void updateProbability() {
+		probability = 0;
+		for (CodingNode successor : getSuccessors()) {
+			probability += successor.getProbability();
+		}
+	}
+
+	/**
+	 * Prints the coding tree of this node to the system.out, with
+	 * all output indented by indentation spaces.
+	 */
 	private void printIndented(int indentation) {
-		
+
 		// Indent the output.
 		for (int i = 0; i < indentation; i++) {
 			System.out.print("  ");
 		}
-		
-		// Print the node itself, and then its successors recursively.
+
+		// Print the node itself,
 		if (isLeaf()) {
-			System.out.println(getSymbol() + " " + getProbability());
+			System.out.println(getSymbol() + " " + CodingApp.DF.format(getProbability()));
 		}
 		else {
-			System.out.println(getProbability());
+			System.out.println(CodingApp.DF.format(getProbability()));
 		}
+
+		// and then its successors recursively.
 		for (CodingNode successor : getSuccessors()) {
 			successor.printIndented(indentation + 1);
 		}

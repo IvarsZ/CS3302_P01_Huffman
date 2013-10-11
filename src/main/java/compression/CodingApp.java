@@ -1,23 +1,27 @@
 package compression;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Scanner;
 
-// TODO comment.
+/**
+ * Entry point of the program. Reads information source and other parameters,
+ * then produces a coding tree and a coding for it.
+ */
 public class CodingApp 
 {
-	private static final DecimalFormat DF = new DecimalFormat("#.##");
+	public static final DecimalFormat DF = new DecimalFormat("#.##");
 	
 	public static void main( String[] args )
 	{
-		// Read the information source.
+		// Read the information source and print it.
 		Scanner in = new Scanner(System.in);
-		ArrayList<SourceSymbol> source = readInformationSource(in);
+		InformationSource source = InformationSource.readInformationSource(in);
+		source.print();
 
-		// Choose a number of code symbols. TODO limit?
+		// Choose a number of code symbols, must have at least 2.
 		System.out.println("Enter the size of the code alphabet.");
-		int codeAlphabetSize = readPositiveInt(in);
+		int codeAlphabetSize = readInt(in, 2);
+		in.nextLine();
 
 		// Choose compression algorithm - Shannon-Fano or Huffman.
 		System.out.println("Enter S to use Shannon-Fano coding or H for Huffman coding.");
@@ -36,6 +40,8 @@ public class CodingApp
 		if (algorithmChoice.equals("H")) {
 			codingTree = new HuffmanCodingTree(source, codeAlphabetSize);
 		}
+		
+		in.close();
 
 		// Print it, its average length and the entropy of the source.
 		System.out.println("Coding tree:");
@@ -43,14 +49,14 @@ public class CodingApp
 		double averageLength = codingTree.averageLength();
 		System.out.println("Average length: " + DF.format(averageLength));
 		System.out.println("Entropy:");
-		double entropy = entropy(source);
+		double entropy = source.entropy();
 		System.out.println(DF.format(entropy)); // TODO fix for non-binary sources.
 		System.out.println("Average length/Entropy:");
 		System.out.println(DF.format(averageLength/entropy));
 		
 		// Generate a random message that is consistent with the information source.
 		System.out.println("Random message:");
-		String message = generateRandomMessage(source, 20);
+		String message = source.generateRandomMessage(20);
 		System.out.println(message);
 
 		// Encode and decode it.
@@ -68,93 +74,57 @@ public class CodingApp
 		else {
 			System.out.println("Decoded incorrectly.");
 		}
-
-		in.close(); // TODO where.
 	}
 	
-	public static int readPositiveInt(Scanner in) {
+	/**
+	 * @return an integer read from the given scanner
+	 * that is larger or equal to the given lower bound - min.
+	 */
+	public static int readInt(Scanner in, int min) {
 		
-		int readInt = 0;
-		while (readInt < 1) {
+		// Keep reading while smaller than min.
+		int readInt = Integer.MIN_VALUE;
+		while (readInt < min) {
 
+			// Check if integer.
 			if (in.hasNextInt()) {
 				readInt = in.nextInt();
 			}
 			
-			if (readInt < 1) {
-				System.out.println("Invalid input, enter a positive integer.");
+			if (readInt < min) {
+				
+				// Print error message on unsuccessful try and clear the input buffer.
+				System.out.println("Invalid input, enter an integer larger or equal to " + min + ".");
 				in.nextLine();
 			}
 		}
 		
-		in.nextLine();
 		return readInt;
 	}
+	
+	/**
+	 * @return a double read from the given scanner
+	 * that is larger or equal to the given lower bound - min.
+	 */
+	public static double readDouble(Scanner in, double min) {
+		
+		// Keep reading while smaller than min.
+		double readDouble = Double.NEGATIVE_INFINITY;
+		while (readDouble < min) {
 
-	public static ArrayList<SourceSymbol> readInformationSource(Scanner in) {
-
-		// Read the number of symbols to read.
-		System.out.println("Enter the number of symbols in the information source.");
-		int symbolsToRead = readPositiveInt(in);
-
-		System.out.println("Enter the information source");
-		System.out.println("as a list of symbol (single character) and probability (decimal) pairs");
-		System.out.println("separated by spaces, e.g. a 0.3 b 0.3 c 0.4");
-
-		ArrayList<SourceSymbol> source = new ArrayList<SourceSymbol>();
-
-		while (symbolsToRead > 0) {
-
-			// Read a single character.
-			String input = in.next();
-			while (input.length() != 1) {
-				System.out.println("Invalid input - too long symbol, try again.");
-				in.nextLine();
-				input = in.next();
+			// Check if double.
+			if (in.hasNextDouble()) {
+				readDouble = in.nextDouble();
 			}
-			char symbol = input.charAt(0);
-
-			// Read a double.
-			// TODO ensure is positive.
-			while (!in.hasNextDouble()) {
-				System.out.println("Invalid input - nondecimal probability, try again.");
+			
+			if (readDouble < min) {
+				
+				// Print error message on unsuccessful try and clear the input buffer.
+				System.out.println("Invalid input, enter a decimal larger or equal to " + min + ".");
 				in.nextLine();
 			}
-			double probability = in.nextDouble();
-
-			source.add(new SourceSymbol(symbol, probability));
-			symbolsToRead--;
-		}
-
-		in.nextLine();
-		return source;
-	}
-	
-	public static double entropy(ArrayList<SourceSymbol> source) {
-		
-		double entropy = 0;
-		for (SourceSymbol sourceSymbol : source) {
-			double probability = sourceSymbol.getProbability();
-			entropy -= probability * Math.log(probability)/Math.log(2);
 		}
 		
-		return entropy;
-	}
-	
-	public static String generateRandomMessage(ArrayList<SourceSymbol> source, int length) {
-		
-		String message = "";
-		for (int i = 0; i < length; i++) {
-			double r = Math.random();
-			double s = 0;
-			for (SourceSymbol sourceSymbol : source) {
-				s += sourceSymbol.getProbability();
-				if (r <= s) {
-					message += sourceSymbol.getSymbol();
-				}
-			}
-		}
-		
-		return message;
+		return readDouble;
 	}
 }
