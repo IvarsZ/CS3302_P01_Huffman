@@ -1,0 +1,70 @@
+\documentclass{article}
+
+\usepackage{fixltx2e}
+
+\title{Huffman and Shannon-Fano coding}
+\author{100014525}
+\date{October 2013}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This practical compares Huffman coding with Shannon-Fano coding. The application implements Huffman and Shannon-Fano coding for code alphabets of arbitrary size.
+
+It takes an information source, consisting of source symbols and their probabilities, and the number of code alphabet symbols to use. Then the user chooses between Huffman and Shannon-Fano coding and the program outputs its coding tree and coding function. Afterwards the entropy of the information source, the average length of the coding and the average length vs entropy is printed out. At the end a random source message that is consistent with the probabilities of information source's symbols is encoded and decoded to check the correctness of the implementation. All user input is checked for correctness and asked to be corrected in case of errors.
+
+\subsection{How to build and run}
+\begin{itemize}
+	\item Build using maven by executing the command: mvn package.
+	\item Run by executing the command: java -jar target/P01-Huffman-1.0-SNAPSHOT-jar-with-dependencies.jar
+\end{itemize}
+
+\subsection{Coding functions and coding trees}
+A coding is a function that maps elements of a set called the source alphabet to words of a set called the code alphabet. The words themselves are called codewords. Both Huffman coding and Shannon-Fano codings are instantaneous - no codeword is a prefix of another. An instantaneous coding can be represented using a tree where every source symbol is represented by a leaf of the tree and the path from the root to the leaf is labeled by a sequence of symbols from the code alphabet that forms the codeword used to encode the source symbol. Such tree is called a coding tree and they are used in the implementation to produce Huffman and Shannon-Fano codings.
+
+\section{Huffman coding}
+The Huffman algorithm starts with leaf nodes for each symbol and creates the tree in a bottom-up fashion. For a Huffman coding of k code alphabet symbols the k nodes with lowest probability are merged into a single node that has the sum of merged nodes' probabilities as its probability and the merged nodes as its successor nodes.This process is repeated with the merged node and the rest of remaining nodes, of course except the ones that were merged, until a single node remains. The result is a coding tree that induces a Huffman code - a code with the shortest possible length. Thus it is an optimal solution.
+
+In the case when k\textgreater 2 one has to be more careful. If k nodes are merged at every step, then it is possible that less than k nodes will have to be merged at the last step. But this produces a non-optimal code. Thus if less than k nodes have to be merged at some stage, the place to do it is at the beginning, since those are the nodes with the longest codes.
+
+To determine the number k\textsubscript{0}  of nodes to merge at the first step. First note that if $n\equiv 1\,mod\, (k - 1)$ where n is the number of nodes, then k nodes can be safely merged at the first step. Thus imagine that k\textsubscript{1} empty nodes are added so that $n + k_1 \equiv 1\,mod\, (k - 1)$. Then since those k\textsubscript{1} nodes are empty they can be ignored at the first merge and so $k_0 = k - k_1$.
+
+\section{Shannon-Fano coding}
+The Shannon-Fano algorithm works in a top-down fashion and starts with a single root node that contains all source symbols. For a Shannon-Fano coding of k code alphabet symbols each node is expanded by splitting its source symbols into k parts that are as equal as possible. Meaning $\sum\limits_{i=1}^k |\frac{1}{t} - p_i|$ is minimal, where t is the total probability of all node's source symbols and p\textsubscript{i} is the total probability of the source symbols in the i-th part. Then a node for each part is created and added as the successor of the expanded node. This process is repeated by recursively expanding all newly added nodes with more than one symbol. The result is Shannon-Fano coding tree that is supposed to be non-optimal.
+\section{Design and implementation}
+The source code of the application is in the compression package it consists of 8 classes:
+\begin{itemize}
+	\item \textit{CodingApp} - contains the main method and deals with input/output.
+	\item \textit{SourceSymbol} - a symbol with a probability of appearance.
+	\item \textit{InformationSource} - a list of source symbols, it has methods for calculating entropy and generating random messages consistent with it.
+	\item \textit{CodingNode} - a coding tree's node with a probability and successor nodes, it has methods for printing it, splitting a list of nodes into equal parts by probability and calculating the average length of the coding induced by it.
+	\item \textit{CodingLeaf} - a leaf node of a coding tree with a symbol that is encoded by it.
+	\item \textit{Coding} - a coding function, it encodes/decodes messages and can be constructed from a coding tree.
+	\item \textit{HuffmanCodingTree} - a coding tree produced using Huffman algorithm. A priority queue is used to select the k nodes with the least probability.
+	\item \textit{ShannonFanoCodingTree} - a coding tree produced using Shannon-Fano algorithm.
+\end{itemize}
+To encode messages when a coding function is constructed, a map from symbols to code words is produced by traversing the tree and mapping the symbol of each leaf to the path from root to it, then that map is used to encode messages. To decode messages the tree is traversed according to the code alphabet symbols until a leaf is reached, which is the decoded symbol.
+
+When an information source is constructed the probabilities of its source symbols are normalized so that the total probability of all symbols is 1, as in the definition of information source. It is done by calculating the total probability and dividing probabilities of all symbols with it.
+
+In Shannon-Fano algorithm to split a list of nodes into equal parts by probability an external library is used to generate all possible splits of a list into k parts and then the split with the least difference in total probabilities is selected. This solution is impractical as it has an exponential time complexity, but no better solution is known as the problem (Partition problem) is NP-complete. A heuristic solutions with a linear time complexity exists, which would have to be used in practice. But for comparison of compression efficiency purposes the non-heuristic solution was chosen.
+
+\subsection{Testing}
+
+The implementation was unit tested and the unit tests can be found in the src/test directory.
+
+\section{Comparison}
+
+A coding produced by Huffman algorithm has the smallest possible average length and thus is optimal (proven in lectures). Therefore at best Shannon-Fano algorithm produces a coding with the same average length. But it is non-optimal and thus sometimes worse in compression efficiency than Huffman. An example is a coding for an information source with probabilities 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 and 0.4. In that case the average length for Shannon-Fano is 2.7 and only 2.6 for Huffman. The execution of this example can be found in the experiments.Experiment class.
+
+To determine by how much Shannon-Fano is worse than Huffman, they were compared for 1000 information sources of 4, 5, 6 and 7 source symbols (1000 sources for each) for a code alphabet of 2 symbols. Notice that for sources of size smaller than 4 both codings are optimal and execution of Shannon-Fano takes too much time for larger sources. In addition to produce information sources where Shannon-Fano performs poorly all cases where the ratio was less or equal to 0.85 were printed out.
+
+The ratio of number of times when Shannon-Fano was worse against the total increased from 0.48 to 0.81 for sources of size from 4 to 7. While the actual difference in average lengths was much smaller. The average ratio of average lengths of Huffman against Shannon-Fano were 0.97, 0.98, 0.98 and 0.97 for source sizes from 4 to 7. Thus the ratio of information sources when Shannon-Fano is worse increases as the source size increases, but the ratios of average lengths stays between 0.97 and 0.98.
+
+The reason why Shannon-Fano is worse is that it's a greedy algorithm and a split that is even might have to be split into vastly uneven parts later on. Therefore it's possible that difference of average lengths for Shannon-Fano and Huffman is higher for information sources with higher variance in probabilities. Unfortunately experimenting rejected this hypothesis.
+
+One of the reasons why Huffman is optimal is that the source symbols with higher probabilities have shorter codewords. But when Shannon-Fano does the splitting in equal parts it's possible to pair a symbol of high probability together with a symbol of low probability. Thus either the high probability symbol will have long codeword or the low probability symbol will have a short codeword. Both of which are not optimal.
+This seems to suggest that using heuristic algorithm that splits the list of probabilities by ordering it and putting a diving lines so that each part is as close as possible to the target probability sum. 
+
+\end{document}

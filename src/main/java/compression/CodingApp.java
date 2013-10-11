@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class CodingApp 
 {
-	public static final DecimalFormat DF = new DecimalFormat("#.##");
+	public static final DecimalFormat DF = new DecimalFormat("#.###");
 	
 	public static void main( String[] args )
 	{
@@ -49,11 +49,9 @@ public class CodingApp
 		codingTree.print();
 		double averageLength = codingTree.averageLength();
 		System.out.println("Average length: " + DF.format(averageLength));
-		System.out.println("Entropy:");
 		double entropy = source.entropy(codeAlphabetSize); // Adjust entropy to codeAlphabetSize.
-		System.out.println(DF.format(entropy));
-		System.out.println("Average length/Entropy:");
-		System.out.println(DF.format(averageLength/entropy));
+		System.out.println("Entropy: " + DF.format(entropy));
+		System.out.println("Average length/Entropy: " + DF.format(averageLength/entropy));
 		System.out.println();
 		
 		// Print the encoding.
