@@ -22,7 +22,7 @@ public class ShannonFanoTest extends TestCase {
 	
 	public void testShannonFano() {
 
-		ShannonFanoCodingTree sh = new ShannonFanoCodingTree(source, 2);
+		ShannonFanoCodingTree sh = new ShannonFanoCodingTree(source, 2, false);
 		Coding coding = new Coding(sh);
 		
 		// A is 10, B is 00, C is 010, D is 011, E is 11.
@@ -38,7 +38,7 @@ public class ShannonFanoTest extends TestCase {
 	 */
 	public void testShannonFanoMultiple() {
 
-		ShannonFanoCodingTree sh = new ShannonFanoCodingTree(source, 3);
+		ShannonFanoCodingTree sh = new ShannonFanoCodingTree(source, 3, false);
 		Coding coding = new Coding(sh);
 		
 		// A is 0, B is 20, C is 10, D is 11, E is 21.

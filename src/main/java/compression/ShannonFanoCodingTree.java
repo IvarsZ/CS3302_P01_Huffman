@@ -1,8 +1,7 @@
 package compression;
 
 import java.util.ArrayList;
-
-import org.paukov.combinatorics.ICombinatoricsVector;
+import java.util.List;
 
 /**
  * A coding tree from the Shannon-Fano's algorithm.
@@ -10,14 +9,18 @@ import org.paukov.combinatorics.ICombinatoricsVector;
 public class ShannonFanoCodingTree extends CodingNode {
 
 	private int codeAlphabetSize;
+	private boolean useHeuristic;
 
 	/**
-	 * Construct a Huffman coding tree with the given code alphabet size
+	 * Construct a Shannon-Fano coding tree with the given code alphabet size
 	 * of the given source symbols.
+	 * 
+	 * @param useHeuristic - true if the heuristic method is used to split probabilities into equal parts.
 	 */
-	public ShannonFanoCodingTree(InformationSource source, int codeAlphabetSize) {
+	public ShannonFanoCodingTree(InformationSource source, int codeAlphabetSize, boolean useHeuristic) {
 		
 		this.codeAlphabetSize = codeAlphabetSize;
+		this.useHeuristic = useHeuristic;
 		
 		// Create leaf nodes from the source symbols.
 		ArrayList<CodingNode> nodes = new ArrayList<CodingNode>();
@@ -29,17 +32,28 @@ public class ShannonFanoCodingTree extends CodingNode {
 		this.updateProbability();
 	}
 
+	/**
+	 * Expands the given node by dividing its given successors into codeAlphabetSize equal parts.
+	 */
 	private void expandNode(CodingNode node, ArrayList<CodingNode> successors) {
 
 		// If there are too many successors,
 		if (successors.size() > codeAlphabetSize) {
 
-			// split them in code alphabet size parts and for each split part,
-			ICombinatoricsVector<ICombinatoricsVector<CodingNode>> combination = CodingNode.equalSplit(successors, codeAlphabetSize);
-			for (ICombinatoricsVector<CodingNode> splitPart : combination) {
+			// split them in code alphabet size parts 
+			List<List<CodingNode>> combination;
+			if (!useHeuristic) {
+				combination = CodingNode.equalSplit(successors, codeAlphabetSize);
+			}
+			else {
+				combination = CodingNode.equalHeuresticSplit(successors, codeAlphabetSize);
+			}
+
+			// and for each split part,
+			for (List<CodingNode> splitPart : combination) {
 
 				// if it consists of one node,
-				ArrayList<CodingNode> nextSuccessors = new ArrayList<CodingNode>(splitPart.getVector());
+				ArrayList<CodingNode> nextSuccessors = new ArrayList<CodingNode>(splitPart);
 				if (nextSuccessors.size() == 1) {
 					
 					/// add it as a leaf to the current node.

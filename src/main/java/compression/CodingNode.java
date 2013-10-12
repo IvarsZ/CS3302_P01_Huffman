@@ -1,6 +1,8 @@
 package compression;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.paukov.combinatorics.Factory;
 import org.paukov.combinatorics.Generator;
@@ -19,9 +21,10 @@ public class CodingNode implements Comparable<CodingNode>{
 	 * based on probability of symbols.
 	 * 
 	 * @param partsCount - number of parts to split into.
+	 * 
 	 * @return a vector of vectors representing the equal parts.
 	 */
-	public static ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalSplit(ArrayList<CodingNode> source, int partsCount) {
+	public static List<List<CodingNode>> equalSplit(ArrayList<CodingNode> source, int partsCount) {
 
 		// Reduce parts count to the number of symbols, if there is not enough symbols.
 		if (partsCount > source.size()) {
@@ -58,7 +61,62 @@ public class CodingNode implements Comparable<CodingNode>{
 			}
 		}
 
-		return minDifferenceSplit;
+		// Convert to a list of lists.
+		List<List<CodingNode>> minDifferenceSplitList = new ArrayList<List<CodingNode>>();
+		for (ICombinatoricsVector<CodingNode> part : minDifferenceSplit) {
+			minDifferenceSplitList.add(part.getVector());
+		}
+
+		return minDifferenceSplitList;
+	}
+
+	/**
+	 * Splits the information source into equal parts as much as possible
+	 * based on probability of symbols using a heuristic.
+	 * 
+	 * @param partsCount - number of parts to split into.
+	 * 
+	 * @return a vector of vectors representing the equal parts.
+	 */
+	public static List<List<CodingNode>> equalHeuresticSplit(ArrayList<CodingNode> source, int partsCount) {
+
+		// Reduce parts count to the number of symbols, if there is not enough symbols.
+		if (partsCount > source.size()) {
+			partsCount = source.size();
+		}
+
+		double totalProbability = totalProbability(source);
+		double target = totalProbability/partsCount; // Split the total probability in partsCount parts. 
+
+		// Sort the source list in descending order.
+		Collections.sort(source);
+		Collections.reverse(source);
+		
+		List<List<CodingNode>> split = new ArrayList<List<CodingNode>>();
+		int j = 0;
+		for (int i = 0; i < partsCount; i++) {
+		
+			// Add nodes to a part until its total probability will become larger than the target.
+			// But always add at least one node.
+			ArrayList<CodingNode> part = new ArrayList<CodingNode>();
+			double totalProbabilityOfPart = 0;
+			do {
+				part.add(source.get(j));
+				totalProbabilityOfPart += source.get(j).getProbability();
+				j++;
+			} while (j < source.size() && totalProbabilityOfPart + source.get(j).getProbability() <= target);
+			
+			split.add(part);
+		}
+		
+		// Add the leftovers to the last part.
+		while (j < source.size()) {
+			
+			split.get(partsCount - 1).add(source.get(j));
+			j++;
+		}
+		
+		return split;
 	}
 
 	/**
@@ -200,7 +258,7 @@ public class CodingNode implements Comparable<CodingNode>{
 	public void print() {
 		printIndented(0);
 	}
-	
+
 	/**
 	 * Update the probability with the sum of its successor probabilities.
 	 */

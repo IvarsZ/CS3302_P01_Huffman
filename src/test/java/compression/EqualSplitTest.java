@@ -1,6 +1,7 @@
 package compression;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -42,17 +43,17 @@ public class EqualSplitTest extends TestCase
 	public void testEqualSplitIn2()
 	{
 
-		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalHalves = CodingNode.equalSplit(nodes, 2);
+		List<List<CodingNode>> equalHalves = CodingNode.equalSplit(nodes, 2);
 
-		// First half should contain A and E
-		ICombinatoricsVector<CodingNode> equalHalf = equalHalves.getValue(0);
-		assertEquals(2, equalHalf.getSize());
+		// First half should contain B and D.
+		List<CodingNode> equalHalf = equalHalves.get(0);
+		assertEquals(2, equalHalf.size());
 		assertTrue(equalHalf.contains(b));
 		assertTrue(equalHalf.contains(d));
 
-		// Second half should contain B, C, D.
-		equalHalf = equalHalves.getValue(1);
-		assertEquals(equalHalf.getSize(), 3);
+		// Second half should contain A, C and E.
+		equalHalf = equalHalves.get(1);
+		assertEquals(equalHalf.size(), 3);
 		assertTrue(equalHalf.contains(a));
 		assertTrue(equalHalf.contains(c));
 		assertTrue(equalHalf.contains(e));
@@ -64,33 +65,33 @@ public class EqualSplitTest extends TestCase
 		ArrayList<CodingNode> source = new ArrayList<CodingNode>();
 		CodingNode a = new CodingNode(1);
 		source.add(a);
-		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> part = CodingNode.equalSplit(source, 2);
+		List<List<CodingNode>> part = CodingNode.equalSplit(source, 2);
 
 		// it should be split in one part containing only the element.
-		assertEquals(1, part.getSize());
-		assertEquals(1, part.getValue(0).getSize());
-		assertEquals(a, part.getValue(0).getValue(0));
+		assertEquals(1, part.size());
+		assertEquals(1, part.get(0).size());
+		assertEquals(a, part.get(0).get(0));
 	}
 
 	public void testEqualSplitIn3() {
 
-		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalThirds = CodingNode.equalSplit(nodes, 3);
+		List<List<CodingNode>> equalThirds = CodingNode.equalSplit(nodes, 3);
 
 		// First third should contain A and B
-		ICombinatoricsVector<CodingNode> equalThird = equalThirds.getValue(0);
-		assertEquals(2, equalThird.getSize());
+		List<CodingNode> equalThird = equalThirds.get(0);
+		assertEquals(2, equalThird.size());
 		assertTrue(equalThird.contains(a));
 		assertTrue(equalThird.contains(b));
 
 		// Second third should contain C and E.
-		equalThird = equalThirds.getValue(2);
-		assertEquals(equalThird.getSize(), 2);
+		equalThird = equalThirds.get(2);
+		assertEquals(equalThird.size(), 2);
 		assertTrue(equalThird.contains(c));
 		assertTrue(equalThird.contains(e));
 
 		// Third third should contain D. 
-		equalThird = equalThirds.getValue(1);
-		assertEquals(equalThird.getSize(), 1);
+		equalThird = equalThirds.get(1);
+		assertEquals(equalThird.size(), 1);
 		assertTrue(equalThird.contains(d));
 	}
 	
@@ -109,23 +110,65 @@ public class EqualSplitTest extends TestCase
 		nodes.add(d);
 		nodes.add(e);
 		
-		ICombinatoricsVector<ICombinatoricsVector<CodingNode>> equalThirds = CodingNode.equalSplit(nodes, 3);
+		List<List<CodingNode>> equalThirds = CodingNode.equalSplit(nodes, 3);
 
 		// First third should contain A
-		ICombinatoricsVector<CodingNode> equalThird = equalThirds.getValue(0);
-		assertEquals(1, equalThird.getSize());
+		List<CodingNode> equalThird = equalThirds.get(0);
+		assertEquals(1, equalThird.size());
 		assertTrue(equalThird.contains(a));
 
 		// Second third should contain B and E.
-		equalThird = equalThirds.getValue(2);
-		assertEquals(equalThird.getSize(), 2);
+		equalThird = equalThirds.get(2);
+		assertEquals(equalThird.size(), 2);
 		assertTrue(equalThird.contains(b));
 		assertTrue(equalThird.contains(e));
 
 		// Third third should contain C and D
-		equalThird = equalThirds.getValue(1);
-		assertEquals(equalThird.getSize(), 2);
+		equalThird = equalThirds.get(1);
+		assertEquals(equalThird.size(), 2);
 		assertTrue(equalThird.contains(c));
 		assertTrue(equalThird.contains(d));
+	}
+	
+	public void testEqualHeuristicSplitIn2()
+	{
+
+		List<List<CodingNode>> equalHalves = CodingNode.equalHeuresticSplit(nodes, 2);
+
+		// First half should contain D
+		List<CodingNode> equalHalf = equalHalves.get(0);
+		assertEquals(1, equalHalf.size());
+		
+		assertTrue(equalHalf.contains(d));
+
+		// Second half should contain B, C, D, E.
+		equalHalf = equalHalves.get(1);
+		assertEquals(equalHalf.size(), 4);
+		assertTrue(equalHalf.contains(a));
+		assertTrue(equalHalf.contains(c));
+		assertTrue(equalHalf.contains(e));
+		assertTrue(equalHalf.contains(b));
+	}
+	
+	public void testEqualHeuristicSplitIn3() {
+
+		List<List<CodingNode>> equalThirds = CodingNode.equalHeuresticSplit(nodes, 3);
+
+		// First third should contain D
+		List<CodingNode> equalThird = equalThirds.get(0);
+		assertEquals(1, equalThird.size());
+		assertTrue(equalThird.contains(d));
+
+		// Second third should contain E.
+		equalThird = equalThirds.get(1);
+		assertEquals(1, equalThird.size());
+		assertTrue(equalThird.contains(e));
+
+		// Third third should contain A, B and C. 
+		equalThird = equalThirds.get(2);
+		assertEquals(3, equalThird.size());
+		assertTrue(equalThird.contains(a));
+		assertTrue(equalThird.contains(b));
+		assertTrue(equalThird.contains(c));
 	}
 }

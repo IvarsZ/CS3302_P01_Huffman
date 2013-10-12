@@ -19,9 +19,18 @@ public class Experiment {
 	public static void main(String[] args) {
 
 		nonoptimalSFExample();
-
+		
+		long[] seeds = {25897325899436302L, 902357289359L, 904538923589L, 47529029834L, 892345894869L, 82340856289L, 35436346237L, 35824572316L,
+						9082368943689L, 283467890635L, 890239752348956L, 2357895346048L, 9043673498215L, 236363L, 23463499032L, 89839857L,
+						235927560L, 9972357L, 23325L, 89723579235978L, 89723589L, 892348976L, 9823985L, 236823587L, 372375L, 7823685L, 723475897L,
+						8235829L, 8923489673L, 789237969L};
+		
 		for (int i = 4; i <= 7; i++) {
-			compareMany(1000, i, 2, 25897325899436302L);
+			compareMany(1000, i, 2, seeds[i - 4], false); // No heuristic.
+		}
+		
+		for (int i = 4; i <= 20; i++) {
+			compareMany(1000, i, 2, seeds[i - 4], true); // Heuristic.
 		}
 	}
 
@@ -49,7 +58,7 @@ public class Experiment {
 		double entropy = source.entropy(codeAlphabetSize); // Adjust entropy to codeAlphabetSize.
 		System.out.println("Entropy: " + CodingApp.DF.format(entropy));
 
-		CodingNode codingTreeOfSF = new ShannonFanoCodingTree(source, codeAlphabetSize);
+		CodingNode codingTreeOfSF = new ShannonFanoCodingTree(source, codeAlphabetSize, false);
 		CodingNode codingTreeOfHM = new HuffmanCodingTree(source, codeAlphabetSize);
 
 		// Print Huffman, its average length and the ratio with entropy.
@@ -92,10 +101,8 @@ public class Experiment {
 				CodingApp.DF.format(averageLengthOfHM/averageLengthOfSF));
 	}
 
-	private static void compareMany(int numberOfTimes, int sourceSize, int codeAlphabetSize, long seed) {
+	private static void compareMany(int numberOfTimes, int sourceSize, int codeAlphabetSize, long seed, boolean useHeuristicForSF) {
 		
-		
-
 		System.out.println();
 		System.out.println("Comparing Huffman with Shannon-Fano " + numberOfTimes + " times.");
 		System.out.println("For random sources with size " + sourceSize + " and code alphabet size " + codeAlphabetSize);
@@ -119,7 +126,7 @@ public class Experiment {
 			InformationSource source = new InformationSource(sourceSymbols);
 
 			// Calculate average lengths and compare them.
-			CodingNode codingTreeOfSF = new ShannonFanoCodingTree(source, codeAlphabetSize);
+			CodingNode codingTreeOfSF = new ShannonFanoCodingTree(source, codeAlphabetSize, useHeuristicForSF);
 			CodingNode codingTreeOfHM = new HuffmanCodingTree(source, codeAlphabetSize);
 			double averageLengthOfHM = codingTreeOfHM.averageLength();
 			double averageLengthOfSF = codingTreeOfSF.averageLength();

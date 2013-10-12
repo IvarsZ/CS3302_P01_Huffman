@@ -35,7 +35,7 @@ public class CodingApp
 		// Compute the coding tree.
 		CodingNode codingTree = null;
 		if (algorithmChoice.equals("S")) {
-			codingTree = new ShannonFanoCodingTree(source, codeAlphabetSize);
+			codingTree = new ShannonFanoCodingTree(source, codeAlphabetSize, true);
 		}
 		if (algorithmChoice.equals("H")) {
 			codingTree = new HuffmanCodingTree(source, codeAlphabetSize);

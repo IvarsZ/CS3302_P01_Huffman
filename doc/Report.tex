@@ -48,7 +48,9 @@ To encode messages when a coding function is constructed, a map from symbols to 
 
 When an information source is constructed the probabilities of its source symbols are normalized so that the total probability of all symbols is 1, as in the definition of information source. It is done by calculating the total probability and dividing probabilities of all symbols with it.
 
-In Shannon-Fano algorithm to split a list of nodes into equal parts by probability an external library is used to generate all possible splits of a list into k parts and then the split with the least difference in total probabilities is selected. This solution is impractical as it has an exponential time complexity, but no better solution is known as the problem (Partition problem) is NP-complete. A heuristic solutions with a linear time complexity exists, which would have to be used in practice. But for comparison of compression efficiency purposes the non-heuristic solution was chosen.
+In Shannon-Fano algorithm to split a list of nodes into equal parts by probability an external library is used to generate all possible splits of a list into k parts and then the split with the least difference in total probabilities is selected. This solution is impractical as it has an exponential time complexity, but no better solution is known as the problem (Partition problem) is NP-complete. A heuristic solutions with a linear time complexity exists, which would have to be used in practice. But for comparison of compression efficiency purposes both the non-heuristic and a heuristic solution was chosen.
+
+The heuristic solution splits the list by ordering it in descending order and adding nodes to a part until its total probability will become larger than the target (equal split).
 
 \subsection{Testing}
 
@@ -58,13 +60,14 @@ The implementation was unit tested and the unit tests can be found in the src/te
 
 A coding produced by Huffman algorithm has the smallest possible average length and thus is optimal (proven in lectures). Therefore at best Shannon-Fano algorithm produces a coding with the same average length. But it is non-optimal and thus sometimes worse in compression efficiency than Huffman. An example is a coding for an information source with probabilities 0.1, 0.1, 0.1, 0.1, 0.1, 0.1 and 0.4. In that case the average length for Shannon-Fano is 2.7 and only 2.6 for Huffman. The execution of this example can be found in the experiments.Experiment class.
 
-To determine by how much Shannon-Fano is worse than Huffman, they were compared for 1000 information sources of 4, 5, 6 and 7 source symbols (1000 sources for each) for a code alphabet of 2 symbols. Notice that for sources of size smaller than 4 both codings are optimal and execution of Shannon-Fano takes too much time for larger sources. In addition to produce information sources where Shannon-Fano performs poorly all cases where the ratio was less or equal to 0.85 were printed out.
+To determine by how much Shannon-Fano is worse than Huffman, they were compared for 1000 information sources of 4, 5, 6 and 7 source symbols (1000 sources for each) for a code alphabet of 2 symbols. Notice that for sources of size smaller than 4 both codings are optimal and execution of non-heuristic Shannon-Fano takes too much time for larger sources. In addition to produce information sources where Shannon-Fano performs poorly all cases where the ratio was less or equal to 0.85 were printed out.
 
 The ratio of number of times when Shannon-Fano was worse against the total increased from 0.48 to 0.81 for sources of size from 4 to 7. While the actual difference in average lengths was much smaller. The average ratio of average lengths of Huffman against Shannon-Fano were 0.97, 0.98, 0.98 and 0.97 for source sizes from 4 to 7. Thus the ratio of information sources when Shannon-Fano is worse increases as the source size increases, but the ratios of average lengths stays between 0.97 and 0.98.
 
-The reason why Shannon-Fano is worse is that it's a greedy algorithm and a split that is even might have to be split into vastly uneven parts later on. Therefore it's possible that difference of average lengths for Shannon-Fano and Huffman is higher for information sources with higher variance in probabilities. Unfortunately experimenting rejected this hypothesis.
+A reason why Shannon-Fano is worse might be that it's a greedy algorithm and a split that is even might have to be split into vastly uneven parts later on. Therefore it's possible that difference of average lengths for Shannon-Fano and Huffman is higher for information sources with higher variance in probabilities. Unfortunately experimenting rejected this hypothesis.
 
 One of the reasons why Huffman is optimal is that the source symbols with higher probabilities have shorter codewords. But when Shannon-Fano does the splitting in equal parts it's possible to pair a symbol of high probability together with a symbol of low probability. Thus either the high probability symbol will have long codeword or the low probability symbol will have a short codeword. Both of which are not optimal.
-This seems to suggest that using heuristic algorithm that splits the list of probabilities by ordering it and putting a diving lines so that each part is as close as possible to the target probability sum. 
+
+This seems to suggest that using the heuristic algorithm might provide better compression, because then the symbols with higher probabilities would be kept in the same parts. But it turns out that the average lengths are about the same on average, so no gain is achieved. But still it means that it is better to use the heuristic solution in practice as its much faster.
 
 \end{document}
